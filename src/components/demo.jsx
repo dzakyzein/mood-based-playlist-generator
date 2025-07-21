@@ -1,38 +1,37 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaPlay } from "react-icons/fa";
+import { motion } from "framer-motion";
+import FaceScanner from "./facescanner";
+import { fetchSpotifyTracks } from "../api/spotify";
+
+const moodToQuery = {
+  happy: "happy",
+  sad: "sad",
+  angry: "rock",
+  fear: "dark ambient",
+  surprise: "electro pop",
+  neutral: "pop",
+};
 
 const Demo = () => {
-  const [isScanning, setIsScanning] = useState(false);
-  const [moodResult, setMoodResult] = useState(null);
+  const [scanning, setScanning] = useState(false);
+  const [detectedMood, setDetectedMood] = useState(null);
+  const [tracks, setTracks] = useState([]);
 
-  const handleStartDemo = () => {
-    setIsScanning(true);
-    setMoodResult(null);
+  const handleMoodDetected = async (mood) => {
+    const moodKey = mood.toLowerCase();
+    const query = moodToQuery[moodKey] || "chill vibes";
 
-    setTimeout(() => {
-      setIsScanning(false);
-      // Simulasi hasil mood (bisa random di versi lanjut)
-      setMoodResult("Happy");
-    }, 3000);
+    setDetectedMood(mood);
+    setScanning(false);
+
+    const fetchedTracks = await fetchSpotifyTracks(query);
+    setTracks(fetchedTracks);
   };
 
-  const playlistByMood = {
-    Happy: [
-      "Feel Good Inc - Gorillaz",
-      "Good Vibes - Ayokay",
-      "Happy - Pharrell",
-    ],
-    Sad: [
-      "Someone Like You - Adele",
-      "Let Her Go - Passenger",
-      "Fix You - Coldplay",
-    ],
-    Energetic: [
-      "Eye of the Tiger",
-      "Can't Hold Us - Macklemore",
-      "Believer - Imagine Dragons",
-    ],
+  const handleReset = () => {
+    setDetectedMood(null);
+    setTracks([]);
+    setScanning(false);
   };
 
   return (
@@ -49,89 +48,73 @@ const Demo = () => {
         Try The Demo
       </motion.h2>
 
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className='max-w-3xl mx-auto bg-[#2b1b42] p-10 rounded-2xl shadow-2xl relative'
-      >
-        <p className='text-gray-300 mb-6'>
-          Experience how our AI detects your emotion and generates a
-          personalized playlist based on your mood.
-        </p>
-
-        <div className='flex flex-col md:flex-row items-center justify-center gap-8'>
-          {/* Simulated Camera */}
-          <div className='w-64 h-48 bg-black rounded-xl relative overflow-hidden border-4 border-accentPurple'>
-            <div className='absolute inset-0 flex items-center justify-center text-gray-400 text-sm'>
-              [ camera preview ]
-            </div>
-            <div className='absolute top-2 right-2 w-3 h-3 rounded-full bg-red-500 animate-pulse' />
-          </div>
-
-          {/* Button */}
-          <div className='text-left max-w-sm'>
-            <p className='text-lg font-semibold text-softPurple mb-2'>
-              Real-time Emotion Scan
-            </p>
-            <p className='text-sm text-gray-400 mb-4'>
-              Click to simulate facial mood scanning and get a playlist.
+      <div className='max-w-4xl mx-auto bg-[#2b1b42] p-10 rounded-2xl shadow-2xl'>
+        {!scanning && !detectedMood && (
+          <div>
+            <p className='text-gray-300 mb-6'>
+              Click to activate your camera and detect your current mood.
             </p>
             <button
-              onClick={handleStartDemo}
-              className='flex items-center gap-2 bg-accentPurple px-6 py-3 rounded-full font-medium hover:brightness-110 transition'
+              onClick={() => setScanning(true)}
+              className='bg-accentPurple px-6 py-3 rounded-full font-semibold hover:brightness-110 transition'
             >
-              <FaPlay />
-              Start Demo
+              Start Mood Scan
             </button>
           </div>
-        </div>
+        )}
 
-        {/* Output Playlist */}
-        {moodResult && (
+        {scanning && (
+          <div className='mt-6'>
+            <FaceScanner onMoodDetected={handleMoodDetected} />
+          </div>
+        )}
+
+        {detectedMood && (
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            transition={{ duration: 0.6 }}
             className='mt-10 text-left bg-[#1f1230] p-6 rounded-xl shadow-inner'
           >
-            <p className='text-lg font-semibold text-accentPurple mb-2'>
-              Mood Detected:{" "}
-              <span className='text-softPurple'>{moodResult}</span>
-            </p>
-            <ul className='list-disc list-inside text-sm text-gray-300'>
-              {playlistByMood[moodResult].map((song, idx) => (
-                <li key={idx}>{song}</li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
-      </motion.div>
-
-      {/* Modal Loading */}
-      <AnimatePresence>
-        {isScanning && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className='fixed inset-0 bg-black/80 flex items-center justify-center z-50'
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              transition={{ duration: 0.3 }}
-              className='bg-[#2a1a3f] px-8 py-6 rounded-xl shadow-xl text-white text-center'
-            >
-              <p className='text-lg font-medium text-softPurple mb-3'>
-                Scanning your face...
+            <div className='flex flex-col md:flex-row md:items-center md:justify-between mb-4'>
+              <p className='text-lg font-semibold text-accentPurple'>
+                Mood Detected:{" "}
+                <span className='text-softPurple'>{detectedMood}</span>
               </p>
-              <div className='w-6 h-6 border-4 border-accentPurple border-t-transparent rounded-full animate-spin mx-auto'></div>
-            </motion.div>
+              <button
+                onClick={handleReset}
+                className='mt-4 md:mt-0 bg-accentPurple px-4 py-2 rounded-full text-sm font-medium hover:brightness-110 transition'
+              >
+                Scan Again
+              </button>
+            </div>
+
+            {tracks.length > 0 ? (
+              <div className='space-y-6'>
+                {tracks.map((track) => (
+                  <div key={track.id}>
+                    <p className='mb-1 text-sm text-gray-300'>
+                      {track.title} – {track.artist}
+                    </p>
+                    <iframe
+                      src={`https://open.spotify.com/embed/track/${track.id}`}
+                      width='100%'
+                      height='80'
+                      frameBorder='0'
+                      allow='encrypted-media'
+                      className='rounded-lg'
+                    ></iframe>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className='text-gray-400 mt-4'>
+                No tracks found for this mood.
+              </p>
+            )}
           </motion.div>
         )}
-      </AnimatePresence>
+      </div>
     </section>
   );
 };
