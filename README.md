@@ -1,12 +1,49 @@
-# React + Vite
+# 🎧 MoodTunes — Mood Based Playlist Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive web app that reads your **facial expressions** to detect your current **mood**, then generates a personalized playlist using the **Spotify API**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🧠 **Facial Mood Detection** (simulated)
+- 🎵 **Playlist Generator** powered by Spotify API
+- 🎨 Beautiful animated UI using **Framer Motion**
+- ⚡ Built with **React**, **Vite**, and **TailwindCSS**
+- 🖥️ Interactive sections with scroll-snapping & smooth animations
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 📸 Demo
+
+[👉 Live Demo Link]([https://your-deployed-url.com](https://vercel.com/dzaky-anwar-zeins-projects/mood-based-playlist-generator/34BiATFmsXZVp371KGKjv2Dr8oFe))
+
+---
+
+## 🛠️ Tech Stack
+
+| Category         | Tools                            |
+|------------------|----------------------------------|
+| Frontend         | React, Vite, TailwindCSS, Framer Motion |
+| 3D & Animation   | React Three Fiber (R3F) *(optional)* |
+| API Integration  | Spotify Web API (Client Credentials Flow) |
+| Deployment       | Vercel / Netlify *(choose one)* |
+
+---
+
+## 📦 Installation
+
+```bash
+# 1. Clone this repo
+git clone https://github.com/yourusername/moodtunes.git
+cd moodtunes
+
+# 2. Install dependencies
+npm install
+
+# 3. Create your .env file
+cp .env.example .env
+# Fill in your Spotify Client ID & Secret
+
+# 4. Run locally
+npm run dev
