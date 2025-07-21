@@ -16,7 +16,7 @@ An interactive web app that reads your **facial expressions** to detect your cur
 
 ## 📸 Demo
 
-[👉 Live Demo Link](https://vercel.com/dzaky-anwar-zeins-projects/mood-based-playlist-generator/34BiATFmsXZVp371KGKjv2Dr8oFe)
+[👉 Live Demo Link](https://mood-based-playlist-generator-eta.vercel.app/)
 
 ---
 
